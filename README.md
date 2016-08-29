@@ -26,12 +26,6 @@ Usage
 The best thing to do is to look at the JUnit tests.  The tests are separated 
 into authentication tests and collection tests.  
 
-To run the tests, you will need to run a Meteor application that has some packages
-for testing, such as `accounts-password` and `insecure`.
-
-Download this [Meteor project](https://github.com/kenyee/meteor-test-ddp-endpoint)
-and run Meteor. Then run `gradle test` to verify that the tests pass.
-
 The DDPTestClientObserver in the JUnit tests is the core handler of DDP message 
 results and is a simple example of holding enough state to implement a simple 
 Meteor client.  Note that in a real application, you'll probably want to use an 
@@ -90,6 +84,8 @@ DDP Protocol Version
 --------------------
 This library currently supports DDP Protocol 1 (previous version supported pre1).
 
+Also note that Meteor is heading towards the [Apollo Stack](https://themeteorchef.com/snippets/an-introduction-to-the-apollo-stack-for-the-uninitiated/) which will use GraphQL instead of DDP.
+
 Maven Artifact
 --------------
 This library is in the Maven Central Library hosted by Sonatype.
@@ -119,6 +115,7 @@ library revision in the last digit (0.5.7.1, 0.5.7.2, etc.)
 * 1.0.0.2 - fix trustmanager SSL handling when reconnecting; added ability to pass in trustmanager; add reconnect unit test
 * 1.0.0.3 - update to Apache Commons 4; add custom Gson constructor
 * 1.0.0.4 - add unsubscribe by ID method to complement unsubscribe by name
+* 1.0.0.5 - merge PRs from [jazeee](https://github.com/jazeee) for making nextID Atomic and compatibility update for Meteor 1.3.5.1 (also tested w/ 1.4.1)
 
 To-Do
 -----
