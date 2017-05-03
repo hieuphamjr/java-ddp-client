@@ -16,6 +16,7 @@
 
 package com.keysolutions.ddpclient;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -30,11 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.java_websocket.WebSocket.READYSTATE;
-import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
@@ -280,12 +281,14 @@ public class DDPClient extends Observable {
             try {
                 SSLContext sslContext = SSLContext.getInstance( "TLS" );
                 sslContext.init(null, mTrustManagers, null);
-                // now we can set the web service client to use this SSL context
-                mWsClient.setWebSocketFactory( new DefaultSSLWebSocketClientFactory( sslContext ) );
+                SSLSocketFactory factory = sslContext.getSocketFactory();
+                mWsClient.setSocket(factory.createSocket());
             } catch (NoSuchAlgorithmException e) {
                 log.warn("Error accessing Java default trustmanager algorithms {}", e);
             } catch (KeyManagementException e) {
                 log.warn("Error accessing Java default cacert keys {}", e);
+            } catch (IOException e) {
+                log.warn("Error creating socket factory {}", e);
             }
         }
     }
