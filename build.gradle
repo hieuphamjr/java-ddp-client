@@ -105,7 +105,7 @@ signing {
 }
 
 // use this for testing pom.xml generation
-task writeNewPom << {
+task writeNewPom doLast {
     pom {
         project {
             inceptionYear '2013'
