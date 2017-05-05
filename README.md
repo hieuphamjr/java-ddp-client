@@ -116,6 +116,7 @@ library revision in the last digit (0.5.7.1, 0.5.7.2, etc.)
 * 1.0.0.3 - update to Apache Commons 4; add custom Gson constructor
 * 1.0.0.4 - add unsubscribe by ID method to complement unsubscribe by name
 * 1.0.0.5 - merge PRs from [jazeee](https://github.com/jazeee) for making nextID Atomic and compatibility update for Meteor 1.3.5.1 (also tested w/ 1.4.1)
+* 1.0.0.6 - bumped java-websocket lib to 1.3.3 to fix crash from PR by Stephen Glancy.
 
 To-Do
 -----
