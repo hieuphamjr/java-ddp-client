@@ -98,7 +98,7 @@ And in Maven, you can reference it with this:
     <dependency>
       <groupId>com.keysolutions</groupId>
       <artifactId>java-ddp-client</artifactId>
-      <version>1.0.0.4</version>
+      <version>1.0.0.7</version>
       <type>pom</type>
     </dependency>
 
@@ -117,6 +117,7 @@ library revision in the last digit (0.5.7.1, 0.5.7.2, etc.)
 * 1.0.0.4 - add unsubscribe by ID method to complement unsubscribe by name
 * 1.0.0.5 - merge PRs from [jazeee](https://github.com/jazeee) for making nextID Atomic and compatibility update for Meteor 1.3.5.1 (also tested w/ 1.4.1)
 * 1.0.0.6 - bumped java-websocket lib to 1.3.3 to fix crash from PR by Stephen Glancy.
+* 1.0.0.7 - broken dependency resolved.
 
 To-Do
 -----
