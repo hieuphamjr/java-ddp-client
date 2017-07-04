@@ -18,6 +18,14 @@ project.tasks.withType(AbstractCompile, { AbstractCompile ac ->
     ac.options.bootClasspath = bootClasspathStr // options is always there but not defined on AbstractCompile so going to hit it anyway
 })
 
+// set default for sonatype variables so it can be built on checkout
+if (!project.hasProperty("sonatypeUsername")) {
+    ext.sonatypeUsername = "username"
+}
+if (!project.hasProperty("sonatypePassword")) {
+    ext.sonatypePassword = "password"
+}
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Java DDP Client Library', 'Implementation-Version': version
