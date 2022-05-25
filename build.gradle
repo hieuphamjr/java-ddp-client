@@ -1,8 +1,9 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'signing'
-apply plugin: 'maven'
-
+plugins {
+    id "maven-publish"
+    id "java"
+    id "eclipse"
+    id "signing"
+}
 group = 'com.keysolutions'
 version = '1.0.0.7'
 // compile for JDK 1.5 for maximum backwards compatibility
@@ -12,10 +13,11 @@ targetCompatibility = 1.5
 
 // get rid of bootclasspath warning by setting it
 def env = System.getenv()
-def bootClasspathStr = env['JAVA_HOME'] + "/jre/lib/rt.jar"
-println env['JAVA_HOME']+'/jre/lib/rt.jar' 
+def bootClasspathStr = files(env['JAVA_HOME'] + "/jre/lib/rt.jar")
+println files(env['JAVA_HOME']+'/jre/lib/rt.jar')
+
 project.tasks.withType(AbstractCompile, { AbstractCompile ac ->
-    ac.options.bootClasspath = bootClasspathStr // options is always there but not defined on AbstractCompile so going to hit it anyway
+    ac.options.bootstrapClasspath = bootClasspathStr // options is always there but not defined on AbstractCompile so going to hit it anyway
 })
 
 // set default for sonatype variables so it can be built on checkout
@@ -47,69 +49,87 @@ repositories {
     mavenCentral()
 
     maven {
-        url 'http://clojars.org/repo'
+        url = 'https://clojars.org/repo'
     }
 }
 
 dependencies {
-    compile "org.apache.commons:commons-collections4:[4.0,5.0)"
-    testCompile "junit:junit:[4,5)"
-    compile "org.java-websocket:Java-WebSocket:1.3.4"
-    compile "com.google.code.gson:gson:[2.3,3.0)"
-    compile "org.slf4j:slf4j-api:[1.7,1.8)"
-    compile "org.slf4j:slf4j-simple:[1.7,1.8)"
-    compile "com.nimbusds:srp6a:[1.5,1.6)"
+    implementation 'org.apache.commons:commons-collections4:4.4'
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'org.java-websocket:Java-WebSocket:1.3.4'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+    implementation 'com.nimbusds:srp6a:2.1.0'
 }
+//dependencies {
+//    implementation "org.apache.commons:commons-collections4:[4.0,5.0)"
+//    testImplementation "junit:junit:[4,5)"
+//    implementation "org.java-websocket:Java-WebSocket:1.3.4"
+//    implementation "com.google.code.gson:gson:[2.3,3.0)"
+//    implementation "org.slf4j:slf4j-api:[1.7,1.8)"
+//    implementation "org.slf4j:slf4j-simple:[1.7,1.8)"
+//    implementation "com.nimbusds:srp6a:[1.5,1.6)"
+//}
 
 test {
     systemProperties 'property': 'value'
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
- 
-        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-            authentication(userName: sonatypeUsername, password: sonatypePassword)
-        }
-        
-        pom.project {
-            name 'JavaDDPClient'
-            packaging 'jar'
-            description 'JavaDDPClient is a Java library for the Meteor.js framework DDP websocket protocol'
-            url 'https://github.com/kenyee/java-ddp-client'
- 
-            scm {
-                url 'scm:git@github.com:kenyee/java-ddp-client.git'
-                connection 'scm:git@github.com:kenyee/java-ddp-client.git'
-                developerConnection 'scm:git@github.com:kenyee/java-ddp-client.git'
-            }
- 
-            licenses {
-                license {
-                   name 'The Apache Software License, Version 2.0'
-                   url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                   distribution 'repo'
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'JavaDDPClient'
+                packaging = 'jar'
+                description = 'JavaDDPClient is a Java library for the Meteor.js framework DDP websocket protocol'
+                url = 'https://github.com/kenyee/java-ddp-client'
+
+                scm {
+                    url = 'scm:git@github.com:kenyee/java-ddp-client.git'
+                    connection = 'scm:git@github.com:kenyee/java-ddp-client.git'
+                    developerConnection = 'scm:git@github.com:kenyee/java-ddp-client.git'
                 }
-            }
- 
-            developers {
-                developer {
-                    id 'kenyee'
-                    name 'Ken Yee'
+
+                licenses {
+                    license {
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'kenyee'
+                        name = 'Ken Yee'
+                    }
                 }
             }
         }
     }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = sonatypeUsername
+                password = sonatypePassword
+            }
+        }
+    }
 }
-
 artifacts {
     archives jar
     archives javadocJar
     archives sourcesJar
 }
 signing {
-    sign configurations.archives
+    sign publishing.publications.mavenJava
 }
 
 // use this for testing pom.xml generation
@@ -119,9 +139,9 @@ task writeNewPom doLast {
             inceptionYear '2013'
             licenses {
                 license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
+                    name = 'The Apache Software License, Version 2.0'
+                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution = 'repo'
                 }
             }
         }
